@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milk Tea &amp; Beverage Shop | POS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="shop-header">
+        <div class="page-width">
+            <p class="eyebrow">POINT OF SALE</p>
+            <h1>Milk Tea &amp; Beverage Shop</h1>
+            <p>Your everyday favorites, freshly served.</p>
+        </div>
+    </header>
+
+    <main class="page-width pos-layout">
+        <section aria-labelledby="menu-heading">
+            <div class="section-heading">
+                <h2 id="menu-heading">Our drinks</h2>
+                <span class="product-count">{{ products | length }} products</span>
+            </div>
+            <p class="section-description">Regular-sized teas and bottled water. Prices in Philippine pesos.</p>
+
+            <div class="product-grid">
+                {% for product in products %}
+                <article class="product-card">
+                    <h3>{{ product.name }}</h3>
+                    <p class="price">₱{{ "%.2f" | format(product.price) }}</p>
+                    <form method="post" action="{{ url_for('update_cart', product_id=product.id, action='add') }}">
+                        <button class="add-button" type="submit" aria-label="Add {{ product.name }} to cart">Add to cart</button>
+                    </form>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <aside class="order-panel" aria-labelledby="order-heading">
+            <h2 id="order-heading">Order summary</h2>
+            {% if items %}
+            <ul class="order-items">
+                {% for item in items %}
+                <li class="order-item">
+                    <h3>{{ item.name }}</h3>
+                    <p class="unit-price">₱{{ "%.2f" | format(item.price) }} each</p>
+                    <div class="item-controls">
+                        <div class="quantity-controls" role="group" aria-label="Quantity of {{ item.name }}">
+                            <form method="post" action="{{ url_for('update_cart', product_id=item.id, action='decrease') }}">
+                                <button type="submit" aria-label="Decrease quantity of {{ item.name }}">−</button>
+                            </form>
+                            <span class="quantity" aria-label="Quantity {{ item.quantity }}">{{ item.quantity }}</span>
+                            <form method="post" action="{{ url_for('update_cart', product_id=item.id, action='add') }}">
+                                <button type="submit" aria-label="Increase quantity of {{ item.name }}">+</button>
+                            </form>
+                        </div>
+                        <strong class="item-subtotal">₱{{ "%.2f" | format(item.subtotal) }}</strong>
+                    </div>
+                    <form method="post" action="{{ url_for('update_cart', product_id=item.id, action='remove') }}">
+                        <button class="remove-button" type="submit" aria-label="Remove {{ item.name }} from cart">Remove</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="empty-order">
+                <p class="empty-title">No items in the order</p>
+                <p>Choose a drink and click Add to cart to begin.</p>
+            </div>
+            {% endif %}
+            <div class="order-total">
+                <span>Total</span>
+                <strong id="order-total">₱{{ "%.2f" | format(total) }}</strong>
+            </div>
+            <p class="stage-note">Stage 2 · Ordering available. Cash payment comes in Stage 3.</p>
+        </aside>
+    </main>
+</body>
+</html>
