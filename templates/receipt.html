@@ -1,0 +1,20 @@
+<p class="success-message" role="status">Payment successful! Change: {{ receipt.change | money }}</p>
+<section class="receipt" aria-labelledby="receipt-heading">
+    <h2 id="receipt-heading">Digital receipt</h2>
+    <p>Milk Tea &amp; Beverage Shop</p>
+    <p class="reference">Transaction reference: {{ receipt.reference }}</p>
+    <ul class="receipt-items">
+        {% for item in receipt['items'] %}
+        <li>
+            <span>{{ item.name }}<br><small>{{ item.quantity }} × {{ item.price | money }}</small></span>
+            <strong>{{ item.subtotal | money }}</strong>
+        </li>
+        {% endfor %}
+    </ul>
+    <dl class="receipt-totals">
+        <div><dt>Total</dt><dd>{{ receipt.total | money }}</dd></div>
+        <div><dt>Cash received</dt><dd>{{ receipt.cash | money }}</dd></div>
+        <div><dt>Change</dt><dd>{{ receipt.change | money }}</dd></div>
+    </dl>
+    <p class="thank-you">Thank you for your purchase!</p>
+</section>

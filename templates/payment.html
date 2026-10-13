@@ -1,0 +1,9 @@
+<form class="payment-form" method="post" action="{{ url_for('pay') }}">
+    <label for="cash">Cash received (₱)</label>
+    <p id="cash-help">Enter an amount such as 100 or 100.50, without commas.</p>
+    <input id="cash" name="cash" type="text" inputmode="decimal" value="{{ cash }}"
+           autocomplete="off" aria-describedby="cash-help{% if error %} payment-error{% endif %}"
+           {% if error %}aria-invalid="true"{% endif %}>
+    {% if error %}<p id="payment-error" class="error-message" role="alert">{{ error }}</p>{% endif %}
+    <button class="add-button" type="submit" {% if not items %}disabled{% endif %}>Process payment</button>
+</form>

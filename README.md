@@ -26,11 +26,19 @@ receipt is also stored in the session; there is no permanent transaction history
 ```text
 app.py                  Flask application and fixed product list
 templates/index.html    Menu and order summary layout
+templates/payment.html  Cash input and validation messages
+templates/receipt.html  Payment confirmation and digital receipt
 static/css/style.css    Application styling
 requirements.txt        Python dependency
 tests/test_cart.py      Ordering checks using Python unittest
 tests/test_payment.py   Payment validation and transaction lifecycle checks
 ```
+
+The Python code keeps order calculation in `get_order()` and cash validation in
+`validate_cash()`. The `money` template filter gives all displayed amounts the
+same peso symbol and two decimal places. The main template includes the payment
+or receipt template as needed. Shared CSS colors are defined at the top of the
+stylesheet. No JavaScript is required; buttons use ordinary Flask form posts.
 
 ## Run on Windows (PowerShell)
 
