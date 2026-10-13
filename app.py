@@ -1,5 +1,6 @@
 """Milk Tea and Beverage Shop POS: ordering and cash payments."""
 
+import os
 import re
 import secrets
 from decimal import Decimal
@@ -8,8 +9,12 @@ from uuid import uuid4
 from flask import Flask, abort, redirect, render_template, request, session, url_for
 
 app = Flask(__name__)
-# A temporary key signs each browser's cart. Restarting the app resets sessions.
-app.secret_key = secrets.token_hex(32)
+# All Vercel instances must use the same key to read browser sessions.
+secret_key = os.environ.get("SECRET_KEY")
+if os.environ.get("VERCEL") and not secret_key:
+    raise RuntimeError("Set SECRET_KEY in the Vercel project's environment variables.")
+app.secret_key = secret_key or secrets.token_hex(32)
+app.config["SESSION_COOKIE_SECURE"] = bool(os.environ.get("VERCEL"))
 
 # Store prices as whole pesos; these fixed products do not need a database.
 PRODUCTS = [

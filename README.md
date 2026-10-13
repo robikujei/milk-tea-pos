@@ -20,6 +20,8 @@ keeps the current order without adding items again. Restarting the server
 key and clears the cart. Separate browsers have separate carts; tabs in the same
 browser share a cart, and refreshing a tab shows its latest state. The latest
 receipt is also stored in the session; there is no permanent transaction history.
+When a stable `SECRET_KEY` environment variable is set, sessions also survive
+server restarts. Vercel requires this setting so its instances share the same key.
 
 ## Files
 
@@ -118,3 +120,35 @@ places produce an error. Calculations use Python's Decimal for exact centavos.
 
 Run all automated checks with the unittest command above. Review and commit
 Stage 3 when satisfied with the manual checks.
+
+## Deploy to Vercel (optional)
+
+Vercel detects Flask from `requirements.txt` and uses the `app` in `app.py`.
+`vercel.json` runs `build.py` to copy the stylesheet from `static/` to
+`public/static/`, where Vercel serves it at the existing `/static/css/style.css`
+URL. The generated copy is ignored by Git; edit the original stylesheet only.
+
+1. Commit and push the deployment files to your GitHub repository.
+2. In Vercel, create a new project and import `robikujei/milk-tea-pos`.
+3. Keep the repository root as the Root Directory and use Flask detection.
+   Leave the build/output overrides at their defaults; the build command is
+   supplied by `vercel.json`.
+4. Generate a secret locally in PowerShell:
+
+   ```powershell
+   python -c "import secrets; print(secrets.token_hex(32))"
+   ```
+
+5. Add the generated value as `SECRET_KEY` in Vercel's Environment Variables
+   for Production and Preview before deploying. Keep the value private and
+   out of Git. Changing it later invalidates existing carts and receipts.
+6. Click Deploy. After deployment, open the URL and test the stylesheet, adding
+   a drink, refreshing the cart, paying, viewing the receipt, and New Transaction.
+   If you add or change the environment variable after deployment, redeploy.
+
+Local use still works with `python app.py` and does not require an environment
+variable. The app does not automatically load `.env` files. Hosted sessions use
+HTTPS-only cookies. Transaction history is not saved permanently, and the known
+overlapping-request limitations of cookie-based carts remain unchanged.
+
+Reference: https://vercel.com/docs/frameworks/backend/flask
