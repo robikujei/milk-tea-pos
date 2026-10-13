@@ -29,7 +29,7 @@
                     <h3>{{ product.name }}</h3>
                     <p class="price">₱{{ "%.2f" | format(product.price) }}</p>
                     <form method="post" action="{{ url_for('update_cart', product_id=product.id, action='add') }}">
-                        <button class="add-button" type="submit" aria-label="Add {{ product.name }} to cart">Add to cart</button>
+                        <button class="add-button" type="submit" {% if receipt %}disabled{% endif %} aria-label="Add {{ product.name }} to cart">Add to cart</button>
                     </form>
                 </article>
                 {% endfor %}
@@ -47,17 +47,17 @@
                     <div class="item-controls">
                         <div class="quantity-controls" role="group" aria-label="Quantity of {{ item.name }}">
                             <form method="post" action="{{ url_for('update_cart', product_id=item.id, action='decrease') }}">
-                                <button type="submit" aria-label="Decrease quantity of {{ item.name }}">−</button>
+                                <button type="submit" {% if receipt %}disabled{% endif %} aria-label="Decrease quantity of {{ item.name }}">−</button>
                             </form>
                             <span class="quantity" aria-label="Quantity {{ item.quantity }}">{{ item.quantity }}</span>
                             <form method="post" action="{{ url_for('update_cart', product_id=item.id, action='add') }}">
-                                <button type="submit" aria-label="Increase quantity of {{ item.name }}">+</button>
+                                <button type="submit" {% if receipt %}disabled{% endif %} aria-label="Increase quantity of {{ item.name }}">+</button>
                             </form>
                         </div>
                         <strong class="item-subtotal">₱{{ "%.2f" | format(item.subtotal) }}</strong>
                     </div>
                     <form method="post" action="{{ url_for('update_cart', product_id=item.id, action='remove') }}">
-                        <button class="remove-button" type="submit" aria-label="Remove {{ item.name }} from cart">Remove</button>
+                        <button class="remove-button" type="submit" {% if receipt %}disabled{% endif %} aria-label="Remove {{ item.name }} from cart">Remove</button>
                     </form>
                 </li>
                 {% endfor %}
@@ -72,7 +72,41 @@
                 <span>Total</span>
                 <strong id="order-total">₱{{ "%.2f" | format(total) }}</strong>
             </div>
-            <p class="stage-note">Stage 2 · Ordering available. Cash payment comes in Stage 3.</p>
+            {% if receipt %}
+            <p class="success-message" role="status">Payment successful! Change: ₱{{ receipt.change }}</p>
+            <section class="receipt" aria-labelledby="receipt-heading">
+                <h2 id="receipt-heading">Digital receipt</h2>
+                <p>Milk Tea &amp; Beverage Shop</p>
+                <p class="reference">Transaction reference: {{ receipt.reference }}</p>
+                <ul class="receipt-items">
+                    {% for item in receipt['items'] %}
+                    <li>
+                        <span>{{ item.name }}<br><small>{{ item.quantity }} × ₱{{ "%.2f" | format(item.price) }}</small></span>
+                        <strong>₱{{ "%.2f" | format(item.subtotal) }}</strong>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <dl class="receipt-totals">
+                    <div><dt>Total</dt><dd>₱{{ receipt.total }}</dd></div>
+                    <div><dt>Cash received</dt><dd>₱{{ receipt.cash }}</dd></div>
+                    <div><dt>Change</dt><dd>₱{{ receipt.change }}</dd></div>
+                </dl>
+                <p class="thank-you">Thank you for your purchase!</p>
+            </section>
+            {% else %}
+            <form class="payment-form" method="post" action="{{ url_for('pay') }}">
+                <label for="cash">Cash received (₱)</label>
+                <p id="cash-help">Enter an amount such as 100 or 100.50, without commas.</p>
+                <input id="cash" name="cash" type="text" inputmode="decimal" value="{{ cash }}"
+                       autocomplete="off" aria-describedby="cash-help{% if error %} payment-error{% endif %}"
+                       {% if error %}aria-invalid="true"{% endif %}>
+                {% if error %}<p id="payment-error" class="error-message" role="alert">{{ error }}</p>{% endif %}
+                <button class="add-button" type="submit" {% if not items %}disabled{% endif %}>Process payment</button>
+            </form>
+            {% endif %}
+            <form method="post" action="{{ url_for('new_transaction') }}">
+                <button class="new-transaction" type="submit">New Transaction</button>
+            </form>
         </aside>
     </main>
 </body>

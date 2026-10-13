@@ -55,6 +55,25 @@ button:focus-visible { outline: 3px solid #a96512; outline-offset: 3px; }
 .remove-button { background: transparent; border-color: transparent; color: #96392c; font-size: 13px; padding-left: 0; text-decoration: underline; }
 .remove-button:hover { background: #fff1ed; }
 
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.payment-form { margin-top: 24px; }
+.payment-form label { display: block; font-weight: 700; }
+#cash-help { font-size: 13px; color: #59665f; margin: 6px 0; }
+.payment-form input { width: 100%; min-height: 44px; padding: 10px; font: inherit; border: 1px solid #879d8e; border-radius: 6px; }
+.payment-form input:focus-visible { outline: 3px solid #a96512; outline-offset: 2px; }
+.error-message { color: #96392c; margin-top: 10px; }
+.success-message { background: #e3f2e6; color: #214e42; padding: 14px; border-radius: 6px; margin-top: 20px; font-weight: 700; }
+.receipt { margin-top: 20px; padding-top: 20px; border-top: 2px dashed #b7c9bd; font-size: 14px; }
+.reference { overflow-wrap: anywhere; font-size: 12px; color: #59665f; margin-top: 10px; }
+.receipt-items { list-style: none; padding: 0; }
+.receipt-items li { display: flex; justify-content: space-between; gap: 12px; margin: 12px 0; }
+.receipt-items strong { white-space: nowrap; }
+.receipt-totals { border-top: 1px solid #d9e1d9; padding-top: 12px; }
+.receipt-totals div { display: flex; justify-content: space-between; gap: 12px; margin: 6px 0; }
+.receipt-totals dd { margin: 0; font-weight: 700; }
+.thank-you { text-align: center; margin-top: 20px; }
+.new-transaction { width: 100%; margin-top: 20px; }
+
 /* Stack the layout on smaller windows without horizontal scrolling. */
 @media (max-width: 760px) {
     .pos-layout { grid-template-columns: 1fr; }
